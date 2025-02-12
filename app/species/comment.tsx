@@ -62,10 +62,13 @@ export default function Comment(props: commentProps) {
   return (
     <div className="m-4 flex-auto w-full rounded border-2 p-3 ">
       
-      
-      <p className="mt-3 text-md">{comment.comment}</p>
-      <p className="mt-3 text-sm">On {dateString[0]} at {timeString[0]}:{timeString[1]}</p>
-      
+    
+              <p className="mt-3 text-md">{comment.comment}</p>
+              {dateString[0] && timeString && (
+              <p className="mt-3 text-sm">On {dateString[0]} at {timeString[0]}:{timeString[1]}</p>
+            )}
+
+
       {comment.user_id == userId && comment.species_id == speciesId && (
           <div className="flex mt-5" >
             <Button className="ml-1 mr-1 flex-auto" variant="secondary" type="button" onClick={handleDeleteOpen}>
