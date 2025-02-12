@@ -150,7 +150,7 @@ export default function SpeciesCard(props: speciesProps) {
         </div>
         )}
       <div>
-      {authorInfo && authorInfo[0]?.display_name && authorInfo[0]?.email? (
+      {authorInfo ? (
           <div className="mb-7">
             <div className="flex">
             <p className="mb-7 ">Created by: {authorInfo[0]?.display_name} / {authorInfo[0]?.email} </p>
@@ -159,10 +159,10 @@ export default function SpeciesCard(props: speciesProps) {
             </button>
             </div>
          
-            {bioOpen && authorInfo.length > 0 && authorInfo[0]?.biography && (
+            {bioOpen && authorInfo[0] && (
               <p className="text-sm">{authorInfo[0]?.biography} </p>
           )}
-          {bioOpen && authorInfo.length > 0 && authorInfo[0]?.biography === null &&(
+          {bioOpen && !authorInfo[0] &&(
               <p>This user does not have a biography yet! </p>
           )}
             
