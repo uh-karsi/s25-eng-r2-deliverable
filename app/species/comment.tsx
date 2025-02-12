@@ -87,7 +87,7 @@ export default function Comment(props: commentProps) {
         </DialogHeader>
          
           <div className="flex">
-          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={()=>{deleteSpecies(comment)}} variant="destructive">
+          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={async()=>{ await deleteSpecies(comment)}} variant="destructive">
           <Icons.trash className="mr-3 h-5 w-5" />
           Delete
           </Button>

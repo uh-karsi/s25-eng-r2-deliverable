@@ -22,9 +22,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+ 
 } from "@/components/ui/dialog";
-import { useState, type BaseSyntheticEvent } from "react";
+import { useState } from "react";
 import EditSpeciesDialog from "./edit-species-dialog";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -37,7 +37,7 @@ type Comment = Database["public"]["Tables"]["comments"]["Row"];
 interface speciesProps {
   species: Species;
   userId: string;
-  comments: Array<Comment>;
+  comments: Comment[];
 }
 
 export default function SpeciesCard(props: speciesProps) {
@@ -49,8 +49,8 @@ export default function SpeciesCard(props: speciesProps) {
 
   //open state of more info
   const [open, setOpen] = useState<boolean>(false);
-  const handleOpen = (authId : string) => {setOpen(!open);
-    joinAuthor(authId); setJoin(!join) 
+  const handleOpen = async (authId : string) => {setOpen(!open);setJoin(!join);
+    await joinAuthor(authId); 
   }
 
   //join with author info
@@ -58,7 +58,7 @@ export default function SpeciesCard(props: speciesProps) {
     display_name: string;
     email: string;
     biography: string | null; 
-    species: Array<object>
+    species: object[]
   }
   const [authorInfo, setAuthorInfo] = useState<AuthorInfo[]>([]);
   const [join, setJoin] = useState<boolean>(false);
@@ -132,7 +132,7 @@ export default function SpeciesCard(props: speciesProps) {
       <h4 className="text-lg font-light italic">{species.common_name}</h4>
       <p>{species.description ? species.description.slice(0, 150).trim() + "..." : ""}</p>
       
-      <Button className="mt-3 w-full" onClick={()=>handleOpen(species.author)}>
+      <Button className="mt-3 w-full" onClick={async ()=>await handleOpen(species.author)}>
           Learn More
         </Button>
 
@@ -218,7 +218,7 @@ export default function SpeciesCard(props: speciesProps) {
         </DialogHeader>
          
           <div className="flex">
-          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={()=>{deleteSpecies(species)}} variant="destructive">
+          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={async ()=>{await deleteSpecies(species)}} variant="destructive">
           <Icons.trash className="mr-3 h-5 w-5" />
           Delete
           </Button>

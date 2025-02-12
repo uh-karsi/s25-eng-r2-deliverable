@@ -44,7 +44,6 @@ export default function AddCommentDialog(props: commentProps) {
 
     // pass default values of existing fields
     const currentTimestamp = new Date();
-    const newDate = currentTimestamp.toLocaleDateString() + currentTimestamp.toLocaleTimeString() 
 
     const defaultValues: Partial<FormData> = {
     created_at: currentTimestamp,

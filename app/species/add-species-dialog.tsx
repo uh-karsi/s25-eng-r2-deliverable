@@ -235,7 +235,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                 name="endangered"
                 render={({ field }) => {
                   
-                  const { value, ...rest} = field;
+                  const { value} = field;
                   return (
                     <FormItem className="flex flex-row items-center ">
                       <FormLabel className="w-auto mr-5">Endangered Status</FormLabel>
