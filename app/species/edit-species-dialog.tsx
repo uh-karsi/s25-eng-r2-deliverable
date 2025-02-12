@@ -227,14 +227,12 @@ export default function EditSpeciesDialog(props: editProps) {
                 control={form.control}
                 name="endangered"
                 render={({ field }) => {
-                  const { value, ...rest } = field;
                   return (
                     <FormItem className="flex flex-row items-center ">
                     <FormLabel className="w-auto mr-5">Endangered Status</FormLabel>
                     <FormControl>
                       <Input
                        type="checkbox" 
-                       {...rest}
                        onChange={(event) => field.onChange(event.target.checked)} className="w-5 h-5 "
                       />
                     </FormControl>

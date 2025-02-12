@@ -37,7 +37,7 @@ export default function Comment(props: commentProps) {
   const handleDeleteOpen = () => setDeleteOpen(!deleteOpen)
 
   //delete function
-  const deleteSpecies = async (comment : Comment) => {
+  const deleteComment = async (comment : Comment) => {
     const { error } = await supabase.from("comments").delete().eq('id',comment.id);
 
     //catch error messages
@@ -87,7 +87,8 @@ export default function Comment(props: commentProps) {
         </DialogHeader>
          
           <div className="flex">
-          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={()=>{ deleteSpecies(comment)}} variant="destructive">
+          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={() => {
+    deleteComment(comment).catch(console.error); }} variant="destructive">
           <Icons.trash className="mr-3 h-5 w-5" />
           Delete
           </Button>
