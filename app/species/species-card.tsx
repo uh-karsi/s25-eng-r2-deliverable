@@ -169,7 +169,7 @@ export default function SpeciesCard(props: speciesProps) {
             {bioOpen && authorInfo[0] && (
               <p className="text-sm">{authorInfo[0]?.biography} </p>
           )}
-          {bioOpen && !authorInfo[0] &&(
+          {bioOpen && authorInfo[0] == null &&(
               <p>This user does not have a biography yet! </p>
           )}
             
