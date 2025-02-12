@@ -54,7 +54,13 @@ export default function SpeciesCard(props: speciesProps) {
   }
 
   //join with author info
-  const [authorInfo, setAuthorInfo] = useState<Array<object>>([{display_name: "",email:"",biography:""}]);
+  interface AuthorInfo {
+    display_name: string;
+    email: string;
+    biography: string | null; 
+    species: Array<object>
+  }
+  const [authorInfo, setAuthorInfo] = useState<AuthorInfo[]>([]);
   const [join, setJoin] = useState<boolean>(false);
 
   const joinAuthor = async (authorId : string) => {
