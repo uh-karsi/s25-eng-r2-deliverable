@@ -117,16 +117,8 @@ export default function EditSpeciesDialog(props: editProps) {
       });
     }
 
-    // Because Supabase errors were caught above, the remainder of the function will only execute upon a successful edit
-
-    // Reset form values to the default (empty) values.
-    // Practically, this line can be removed because router.refresh() also resets the form. However, we left it as a reminder that you should generally consider form "cleanup" after an add/edit operation.
     form.reset(defaultValues);
-
     setOpen(false);
-
-    // Refresh all server components in the current route. This helps display the newly created species because species are fetched in a server component, species/page.tsx.
-    // Refreshing that server component will display the new species from Supabase
     router.refresh();
 
     return toast({
@@ -237,17 +229,16 @@ export default function EditSpeciesDialog(props: editProps) {
                 render={({ field }) => {
                   const { value, ...rest } = field;
                   return (
-                    <FormItem>
-                      <FormLabel>Endangered Status</FormLabel>
-                      <FormControl>
-                        <Input
-                         type="checkbox"
-                         onChange={(event) => field.onChange(event.target.checked)}
-                         checked={value ? true : false}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                    <FormItem className="flex flex-row items-center ">
+                    <FormLabel className="w-auto mr-5">Endangered Status</FormLabel>
+                    <FormControl>
+                      <Input
+                       type="checkbox" 
+                       onChange={(event) => field.onChange(event.target.checked)} className="w-5 h-5 "
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                   );
                 }}
               />

@@ -3,6 +3,7 @@ import { TypographyH2 } from "@/components/ui/typography";
 import { createServerSupabaseClient } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
 import AddSpeciesDialog from "./add-species-dialog";
+
 import SpeciesDisplay from "./species-display";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
@@ -12,6 +13,7 @@ export default async function SpeciesList() {
   // Create supabase server component client and obtain user session from stored cookie
   const supabase = createServerSupabaseClient();
   const { data: species } = await supabase.from("species").select("*").order("id", { ascending: false });
+  const { data: comments } = await supabase.from("comments").select("*").order("id", { ascending: false });
 
   const {
     data: { session },
@@ -33,7 +35,7 @@ export default async function SpeciesList() {
        
       </div>
       <Separator className="my-4" />
-      <SpeciesDisplay sessionId={sessionId}  species={species} />
+      <SpeciesDisplay sessionId={sessionId}  species={species} comments={comments} />
     </>
   );
 }

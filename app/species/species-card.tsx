@@ -28,19 +28,24 @@ import { useState, type BaseSyntheticEvent } from "react";
 import EditSpeciesDialog from "./edit-species-dialog";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import Comment from "./comment";
+import AddCommentDialog from "./add-comment";
 
 type Species = Database["public"]["Tables"]["species"]["Row"];
+type Comment = Database["public"]["Tables"]["comments"]["Row"];
 
 interface speciesProps {
   species: Species;
   userId: string;
+  comments: Array<Comment>;
 }
 
 export default function SpeciesCard(props: speciesProps) {
   //prop handling
-  const {species,userId} = props;
+  const {species,userId, comments} = props;
   const router = useRouter();
   const supabase = createBrowserSupabaseClient();
+  
 
   //open state of more info
   const [open, setOpen] = useState<boolean>(false);
@@ -49,7 +54,7 @@ export default function SpeciesCard(props: speciesProps) {
   }
 
   //join with author info
-  const [authorInfo, setAuthorInfo] = useState<object>({display_name: "",email:"",biography:"",species:[]});
+  const [authorInfo, setAuthorInfo] = useState<Array<object>>([{display_name: "",email:"",biography:""}]);
   const [join, setJoin] = useState<boolean>(false);
 
   const joinAuthor = async (authorId : string) => {
@@ -63,8 +68,16 @@ export default function SpeciesCard(props: speciesProps) {
       variant: "destructive",
     });
   }
-  const authObj = data[0]
-  setAuthorInfo(authObj)
+ 
+  //data is set only if it is valid
+  if (data && data.length > 0) {
+    setAuthorInfo(data);
+  } else {
+    // If no data is found, you can either handle it gracefully or set an empty state
+    setAuthorInfo([]);
+  }
+
+
   
   };
   
@@ -137,35 +150,53 @@ export default function SpeciesCard(props: speciesProps) {
         </div>
         )}
       <div>
-        {join && (
+      {authorInfo.length > 0 ? (
           <div className="mb-7">
             <div className="flex">
-            <p className="mb-7 ">Created by: {authorInfo.display_name} / {authorInfo.email} </p>
+            <p className="mb-7 ">Created by: {authorInfo[0].display_name} / {authorInfo[0].email} </p>
             <button onClick={handleBioOpen} className="mr-3 h-5 w-5">
             <Icons.chevronDown className="mr-3 ml-3 mt-0.7 h-5 w-5" />
             </button>
             </div>
          
-            {bioOpen && authorInfo.biography != null && (
-              <p className="text-sm">{authorInfo.biography} </p>
+            {bioOpen && authorInfo.length > 0 && authorInfo[0].biography && (
+              <p className="text-sm">{authorInfo[0].biography} </p>
           )}
-          {bioOpen && authorInfo.biography === null && (
+          {bioOpen && authorInfo.length > 0 && authorInfo[0].biography === null &&(
               <p>This user does not have a biography yet! </p>
           )}
             
           </div>
-        )}
+        ):
+        <p>No author information available</p>
+        }
         
           
       
         {species.author == userId && (
-          <div className="flex">
+          <div className="flex mb-5">
             <EditSpeciesDialog species={species} userId={userId} />
             <Button className="ml-1 mr-1 flex-auto" variant="secondary" type="button" onClick={handleDeleteOpen}>
           Delete Species
           </Button>
+
           </div>
         )} 
+      
+        <div>
+          <p className="mb-5">Comments</p>
+          <div className="flex flex-col justify-center">
+            <div className="mb-5">
+            {comments?.filter((element)=>element.species_id==species.id).map((comment: Comment) => <Comment key={comment.id} comment={comment} userId={userId} speciesId={species.id}/>)}
+          {comments?.filter((element)=>element.species_id==species.id).length == 0 && (
+            <p>No comments yet!</p>
+          )}
+            </div>
+         
+          <AddCommentDialog userId={userId} speciesId={species.id}></AddCommentDialog>
+          
+      </div>
+        </div>
       </div>
       </DialogContent>
     </Dialog>

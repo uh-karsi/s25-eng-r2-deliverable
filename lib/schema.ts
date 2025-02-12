@@ -31,6 +31,43 @@ export interface Database {
           },
         ];
       };
+      comments: {
+        Row: {
+          created_at: Date ;
+          species_id: number;
+          user_id: string;
+          comment: string | null;
+          id: number;
+        };
+        Insert: {
+          created_at: Date ;
+          species_id: number;
+          user_id: string;
+          comment: string | null;
+          id?: number;
+        };
+        Update: {
+          created_at: Date ;
+          species_id?: number;
+          user_id?: string;
+          comment: string | null;
+          id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comments_species_id_fkey";
+            columns: ["species_id"];
+            referencedRelation: "species";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       species: {
         Row: {
           author: string;
