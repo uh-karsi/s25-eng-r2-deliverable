@@ -1,6 +1,5 @@
 "use client";
 
-import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +21,8 @@ import { useRouter } from "next/navigation";
 import { useState, type BaseSyntheticEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import type { Database } from "@/lib/schema";
+type Species = Database["public"]["Tables"]["species"]["Row"];
 
 // We use zod (z) to define a schema for the "Add species" form.
 // zod handles validation of the input values with methods like .string(), .nullable(). It also processes the form inputs with .transform() before the inputs are sent to the database.
@@ -54,35 +55,36 @@ const speciesSchema = z.object({
     .nullable()
     // Transform empty string or only whitespace input to null before form submission, and trim whitespace otherwise
     .transform((val) => (!val || val.trim() === "" ? null : val.trim())),
-  endangered: z.boolean()
+    endangered: z
+    .boolean()
 });
 
 type FormData = z.infer<typeof speciesSchema>;
 
-// Default values for the form fields.
-/* Because the react-hook-form (RHF) used here is a controlled form (not an uncontrolled form),
-fields that are nullable/not required should explicitly be set to `null` by default.
-Otherwise, they will be `undefined` by default, which will raise warnings because `undefined` conflicts with controlled components.
-All form fields should be set to non-undefined default values.
-Read more here: https://legacy.react-hook-form.com/api/useform/
-*/
-const defaultValues: Partial<FormData> = {
-  scientific_name: "",
-  common_name: null,
-  kingdom: "Animalia",
-  total_population: null,
-  image: null,
-  description: null,
-  endangered: false,
-};
+//assign prop types
+interface editProps {
+    species: Species;
+    userId: string;
+  }
+  
 
-export default function AddSpeciesDialog({ userId }: { userId: string }) {
+export default function EditSpeciesDialog(props: editProps) {
   const router = useRouter();
-
+  const {species,userId} = props;
   // Control open/closed state of the dialog
   const [open, setOpen] = useState<boolean>(false);
 
-  // Instantiate form functionality with React Hook Form, passing in the Zod schema (for validation) and default values
+  // pass default values of existing fields
+  const defaultValues: Partial<FormData> = {
+    scientific_name: species.scientific_name,
+    common_name: species.common_name,
+    kingdom: species.kingdom,
+    total_population: species.total_population,
+    image: species.image,
+    description: species.description,
+    endangered: species.endangered
+  };
+
   const form = useForm<FormData>({
     resolver: zodResolver(speciesSchema),
     defaultValues,
@@ -90,10 +92,10 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
   });
 
   const onSubmit = async (input: FormData) => {
-    // The `input` prop contains data that has already been processed by zod. We can now use it in a supabase query
+    console.log(input);
     const supabase = createBrowserSupabaseClient();
-    console.log(input)
-    const { error } = await supabase.from("species").insert([
+    //update info on submit
+    const { error } = await supabase.from("species").update(
       {
         author: userId,
         common_name: input.common_name,
@@ -104,7 +106,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
         image: input.image,
         endangered: input.endangered
       },
-    ]);
+    ).eq('id',species.id);
 
     // Catch and report errors from Supabase and exit the onSubmit function with an early 'return' if an error occurred.
     if (error) {
@@ -128,24 +130,23 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     router.refresh();
 
     return toast({
-      title: "New species added!",
-      description: "Successfully added " + input.scientific_name + ".",
+      title: "Updated!",
+      description: "Successfully edited " + input.scientific_name + ".",
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary">
-          <Icons.add className="mr-3 h-5 w-5" />
-          Add Species
+        <Button className="ml-1 mr-1 flex-auto" >
+          Edit Species
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-screen overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Add Species</DialogTitle>
+          <DialogTitle>Edit Species</DialogTitle>
           <DialogDescription>
-            Add a new species here. Click &quot;Add Species&quot; below when you&apos;re done.
+            Edit your species here. Click &quot;Confirm Changes&quot; below when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -158,7 +159,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                   <FormItem>
                     <FormLabel>Scientific Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Cavia porcellus" {...field} />
+                      <Input  {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +175,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                     <FormItem>
                       <FormLabel>Common Name</FormLabel>
                       <FormControl>
-                        <Input value={value ?? ""} placeholder="Guinea pig" {...rest} />
+                        <Input value={value ?? ""} {...rest} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -190,7 +191,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                     <Select onValueChange={(value) => field.onChange(kingdoms.parse(value))} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a kingdom" />
+                          <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -220,7 +221,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                         <Input
                           type="number"
                           value={value ?? ""}
-                          placeholder="300000"
+                          
                           {...rest}
                           onChange={(event) => field.onChange(+event.target.value)}
                         />
@@ -230,19 +231,19 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                   );
                 }}
               />
-              <FormField
+               <FormField
                 control={form.control}
                 name="endangered"
                 render={({ field }) => {
-                  
-                  const { value, ...rest} = field;
+                  const { value, ...rest } = field;
                   return (
                     <FormItem>
                       <FormLabel>Endangered Status</FormLabel>
                       <FormControl>
                         <Input
-                         type="checkbox" 
+                         type="checkbox"
                          onChange={(event) => field.onChange(event.target.checked)}
+                         checked={value ? true : false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -262,7 +263,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                       <FormControl>
                         <Input
                           value={value ?? ""}
-                          placeholder="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/George_the_amazing_guinea_pig.jpg/440px-George_the_amazing_guinea_pig.jpg"
+                          
                           {...rest}
                         />
                       </FormControl>
@@ -283,7 +284,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                       <FormControl>
                         <Textarea
                           value={value ?? ""}
-                          placeholder="The guinea pig or domestic guinea pig, also known as the cavy or domestic cavy, is a species of rodent belonging to the genus Cavia in the family Caviidae."
+                          
                           {...rest}
                         />
                       </FormControl>
@@ -294,7 +295,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
               />
               <div className="flex">
                 <Button type="submit" className="ml-1 mr-1 flex-auto">
-                  Add Species
+                  Confirm Changes
                 </Button>
                 <DialogClose asChild>
                   <Button type="button" className="ml-1 mr-1 flex-auto" variant="secondary">

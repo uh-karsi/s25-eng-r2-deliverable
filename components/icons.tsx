@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   ArrowRight,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Command,
@@ -16,6 +17,7 @@ import {
   MoreVertical,
   Pizza,
   Plus,
+  Search,
   Settings,
   SunMedium,
   Trash,
@@ -26,11 +28,13 @@ import {
 } from "lucide-react";
 
 export const Icons = {
+  search: Search,
   logo: Command,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
+  chevronDown: ChevronDown,
   trash: Trash,
   post: FileText,
   page: File,
