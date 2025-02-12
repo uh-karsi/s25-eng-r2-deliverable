@@ -31,9 +31,11 @@ import { useRouter } from "next/navigation";
 import Comment from "./comment";
 import AddCommentDialog from "./add-comment";
 
+//grab types species and comment from table properties
 type Species = Database["public"]["Tables"]["species"]["Row"];
 type Comment = Database["public"]["Tables"]["comments"]["Row"];
 
+//identify props and types
 interface speciesProps {
   species: Species;
   userId: string;
@@ -41,19 +43,19 @@ interface speciesProps {
 }
 
 export default function SpeciesCard(props: speciesProps) {
-  //prop handling
+  //prop and variable handling
   const {species,userId, comments} = props;
   const router = useRouter();
   const supabase = createBrowserSupabaseClient();
   
 
-  //open state of more info
+  //open state of "more info" dialog - on opening of this dialog, grab author information for the selected species 
   const [open, setOpen] = useState<boolean>(false);
   const handleOpen = async (authId : string) => {setOpen(!open);setJoin(!join);
     await joinAuthor(authId); 
   }
 
-  //join with author info
+  //join species with author info using states
   interface AuthorInfo {
     display_name: string;
     email: string;
@@ -63,6 +65,7 @@ export default function SpeciesCard(props: speciesProps) {
   const [authorInfo, setAuthorInfo] = useState<AuthorInfo[]>([]);
   const [join, setJoin] = useState<boolean>(false);
 
+  //fetch inner joint of profiles and species according to parameter of author ID and limit to only 1 profile grabbed
   const joinAuthor = async (authorId : string) => {
   const { data, error } = await supabase.from('profiles').select('display_name, email, biography, species!inner(scientific_name, id)').eq('id', authorId).limit(1)
 
@@ -84,11 +87,11 @@ export default function SpeciesCard(props: speciesProps) {
   }
   };
   
-  //open state of delete prompt
+  //open state of delete prompt for species card
   const [deleteOpen, setDeleteOpen ] = useState<boolean>(false);
   const handleDeleteOpen = () => setDeleteOpen(!deleteOpen)
 
-  //delete function
+  //delete function - removes from species table
   const deleteSpecies = async (speciesDel : Species) => {
     const { error } = await supabase.from("species").delete().eq('id',speciesDel.id);
 
@@ -100,7 +103,7 @@ export default function SpeciesCard(props: speciesProps) {
         variant: "destructive",
       });
     }
-    //confirm delete
+   
     router.refresh()
   
     return toast({
@@ -108,10 +111,8 @@ export default function SpeciesCard(props: speciesProps) {
       description: "Permanently deleted " + speciesDel.scientific_name + ".",
     });
   };
-  
-  
 
-  //open state of author bio
+  //open state of author bio + handler
   const [bioOpen, setBioOpen ] = useState<boolean>(false);
   const handleBioOpen = () => setBioOpen(!bioOpen)
  
@@ -140,13 +141,16 @@ export default function SpeciesCard(props: speciesProps) {
         <DialogHeader>
           <DialogTitle>{species.scientific_name}</DialogTitle>
           <DialogDescription className="mt-10 mb-10">
-          <span className="italic">{species.common_name}</span>  |  Kingdom: {species.kingdom}  |  Total Population: 
+            {/* display information at top of card; if population is null, display unknown message */}
+          <span className="italic">{species.common_name}</span> {species.common_name != null && (
+            <span> | </span>
+          )}   
+          Kingdom: {species.kingdom}  |  Total Population: 
 
             { species.total_population ? 
               <span> {species.total_population}</span>
               : <span> Unknown</span>
             }
-         
           </DialogDescription>
           {species.endangered && (
             <DialogDescription>*Endangered</DialogDescription>
@@ -164,6 +168,7 @@ export default function SpeciesCard(props: speciesProps) {
           <div className="mb-7">
             <div className="flex">
             <p className="mb-7 ">Created by: {authorInfo[0]?.display_name} / {authorInfo[0]?.email} </p>
+            {/* toggle author biography */}
             <button onClick={handleBioOpen} className="mr-3 h-5 w-5">
               {bioOpen ? <Icons.chevronDown className="mr-3 ml-3 mt-1 h-5 w-5 rotate-180 transition-all" /> : <Icons.chevronDown className="mr-3 ml-3 mt-1 h-5 w-5 transition-all" />}
             
@@ -175,15 +180,12 @@ export default function SpeciesCard(props: speciesProps) {
           )}
           {bioOpen && authorInfo[0]?.biography == null &&(
               <p>This user does not have a biography yet! </p>
-          )}
-            
+          )}   
           </div>
         ):
         <p>No author information available</p>
         }
-        
-          
-      
+      {/* if current user is author of species, allow option to edit or delete species */}
         {species.author == userId && (
           <div className="flex mb-5">
             <EditSpeciesDialog species={species} userId={userId} />
@@ -193,17 +195,21 @@ export default function SpeciesCard(props: speciesProps) {
 
           </div>
         )} 
-      
+
+      {/* display comments for this specific species ID  */}
         <div>
           <p className="mb-5">Comments</p>
           <div className="flex flex-col justify-center">
             <div className="mb-5">
             {comments?.filter((element)=>element.species_id==species.id).map((comment: Comment) => <Comment key={comment.id} comment={comment} userId={userId} speciesId={species.id}/>)}
+
+          {/* if no comments for this species, display message */}
           {comments?.filter((element)=>element.species_id==species.id).length == 0 && (
             <p>No comments yet!</p>
           )}
             </div>
          
+         {/* allow all to add a comment on the species */}
           <AddCommentDialog userId={userId} speciesId={species.id}></AddCommentDialog>
           
       </div>
@@ -212,7 +218,7 @@ export default function SpeciesCard(props: speciesProps) {
       </DialogContent>
     </Dialog>
 
-    {/* prompt delete dialog */}
+    {/* prompt delete species dialog for confirmation on clicking delete button */}
     <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
       <DialogContent className="max-h-screen overflow-y-auto sm:max-w-[600px]  ">
         <DialogHeader>

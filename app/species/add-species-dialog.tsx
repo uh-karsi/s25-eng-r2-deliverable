@@ -93,6 +93,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     // The `input` prop contains data that has already been processed by zod. We can now use it in a supabase query
     const supabase = createBrowserSupabaseClient();
     
+    //add species on form submit
     const { error } = await supabase.from("species").insert([
       {
         author: userId,
@@ -120,7 +121,6 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     // Reset form values to the default (empty) values.
     // Practically, this line can be removed because router.refresh() also resets the form. However, we left it as a reminder that you should generally consider form "cleanup" after an add/edit operation.
     form.reset(defaultValues);
-
     setOpen(false);
 
     // Refresh all server components in the current route. This helps display the newly created species because species are fetched in a server component, species/page.tsx.
@@ -234,15 +234,14 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                 control={form.control}
                 name="endangered"
                 render={({ field }) => {
-                  
-                 
+                  // checkbox field for endangered boolean
                   return (
                     <FormItem className="flex flex-row items-center ">
                       <FormLabel className="w-auto mr-5">Endangered Status</FormLabel>
                       <FormControl>
                         <Input
                          type="checkbox" 
-                      
+                      // on checking or unchecking the box, input field value toggles true/false
                          onChange={(event) => field.onChange(event.target.checked)} className="w-5 h-5 "
                          
                         />

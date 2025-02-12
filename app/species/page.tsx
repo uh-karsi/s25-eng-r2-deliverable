@@ -9,7 +9,7 @@ import SpeciesDisplay from "./species-display";
 
 
 export default async function SpeciesList() {
-  // Create supabase server component client and obtain user session from stored cookie
+  // Create supabase server component client and obtain user session from stored cookie as well as all info in tables "species" and "comments"
   const supabase = createServerSupabaseClient();
   const { data: species } = await supabase.from("species").select("*").order("id", { ascending: false });
   const { data: comments } = await supabase.from("comments").select("*").order("id", { ascending: false });

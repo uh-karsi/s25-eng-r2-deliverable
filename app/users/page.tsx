@@ -16,6 +16,7 @@ export default async function SpeciesList() {
     redirect("/");
   }
 
+  //fetch all profiles
   const { data: users } = await supabase.from("profiles").select("*").order("id", { ascending: false });
 
   return (

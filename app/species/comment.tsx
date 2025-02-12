@@ -16,6 +16,7 @@ import {
   } from "@/components/ui/dialog";
   import { Icons } from "@/components/icons";
 
+  //fetch type comment from properties in table and declare props so we can use multiple of different types while iterating through the comment card on page
 type Comment = Database["public"]["Tables"]["comments"]["Row"];
 interface commentProps {
     comment: Comment;
@@ -24,19 +25,20 @@ interface commentProps {
   }
 
 export default function Comment(props: commentProps) {
+    //defining variables and props
     const {comment,userId, speciesId} = props;
     const router = useRouter();
   const supabase = createBrowserSupabaseClient();
 
-    //date to strings
+    //convert the date property to strings, separating day/month/year from hour/minute time so we can print this in our comment
     const dateString = comment.created_at.toLocaleString().split('T')
     const timeString = dateString[1]?.split(':')
 
-    //open state of delete prompt
+    //open state of delete prompt and handler
   const [deleteOpen, setDeleteOpen ] = useState<boolean>(false);
   const handleDeleteOpen = () => setDeleteOpen(!deleteOpen)
 
-  //delete function
+  //delete function - delete from table by grabbing comment ID on confirming in prompt
   const deleteComment = async (comment : Comment) => {
     const { error } = await supabase.from("comments").delete().eq('id',comment.id);
 
@@ -48,7 +50,8 @@ export default function Comment(props: commentProps) {
         variant: "destructive",
       });
     }
-    //confirm delete
+   
+    //refresh page
     router.refresh()
 
     return toast({
@@ -62,7 +65,6 @@ export default function Comment(props: commentProps) {
   return (
     <div className="m-4 flex-auto w-full rounded border-2 p-3 ">
       
-    
               <p className="mt-3 text-md">{comment.comment}</p>
               {dateString[0] && timeString && (
               <p className="mt-3 text-sm">On {dateString[0]} at {timeString[0]}:{timeString[1]}</p>

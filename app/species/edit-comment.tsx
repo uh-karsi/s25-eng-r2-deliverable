@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState, type BaseSyntheticEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 type Comment = Database["public"]["Tables"]["comments"]["Row"];
 
 const commentSchema = z.object({
@@ -28,21 +29,15 @@ const commentSchema = z.object({
     .string()
     .nullable()
     // Transform empty string or only whitespace input to null before form submission, and trim whitespace otherwise
-    .transform((val) => (!val || val.trim() === "" ? null : val.trim())),
-  
-    
+    .transform((val) => (!val || val.trim() === "" ? null : val.trim())),    
 })
 
 type FormData = z.infer<typeof commentSchema>;
 
-interface commentProps {
-    comment: Comment;
-  }
 
-
-export default function EditCommentDialog(props:commentProps) {
+export default function EditCommentDialog({comment}:{comment:Comment}) {
     const router = useRouter();
-    const {comment} = props;
+
     // Control open/closed state of the dialog
     const [open, setOpen] = useState<boolean>(false);
 
@@ -58,11 +53,11 @@ export default function EditCommentDialog(props:commentProps) {
     mode: "onChange",
     });
 
+      //update comment info on submit
     const onSubmit = async (input: FormData) => {
-
-    console.log(input);
     const supabase = createBrowserSupabaseClient();
-    //update info on submit
+
+    //grab current date/time as new timestamp
     const currentTimestamp = new Date();
 
     const { error } = await supabase.from("comments").update(
@@ -81,6 +76,7 @@ export default function EditCommentDialog(props:commentProps) {
         });
     }
 
+    //clean up and reload
     form.reset(defaultValues);
     setOpen(false);
     router.refresh();

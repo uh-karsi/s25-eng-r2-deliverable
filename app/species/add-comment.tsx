@@ -59,7 +59,7 @@ export default function AddCommentDialog(props: commentProps) {
     const onSubmit = async (input: FormData) => {
     console.log(input);
     const supabase = createBrowserSupabaseClient();
-    //update info on submit
+    //add comment on submit
  
     const { error } = await supabase.from("comments").insert([
         {
@@ -78,7 +78,7 @@ export default function AddCommentDialog(props: commentProps) {
         variant: "destructive",
         });
     }
-
+//clean up and reload
     form.reset(defaultValues);
     setOpen(false);
     router.refresh();

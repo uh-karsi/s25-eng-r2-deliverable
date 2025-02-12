@@ -24,9 +24,6 @@ import { z } from "zod";
 import type { Database } from "@/lib/schema";
 type Species = Database["public"]["Tables"]["species"]["Row"];
 
-// We use zod (z) to define a schema for the "Add species" form.
-// zod handles validation of the input values with methods like .string(), .nullable(). It also processes the form inputs with .transform() before the inputs are sent to the database.
-
 // Define kingdom enum for use in Zod schema and displaying dropdown options in the form
 const kingdoms = z.enum(["Animalia", "Plantae", "Fungi", "Protista", "Archaea", "Bacteria"]);
 
@@ -69,8 +66,10 @@ interface editProps {
   
 
 export default function EditSpeciesDialog(props: editProps) {
+  //props and variables
   const router = useRouter();
   const {species,userId} = props;
+  
   // Control open/closed state of the dialog
   const [open, setOpen] = useState<boolean>(false);
 
@@ -92,9 +91,8 @@ export default function EditSpeciesDialog(props: editProps) {
   });
 
   const onSubmit = async (input: FormData) => {
-    console.log(input);
     const supabase = createBrowserSupabaseClient();
-    //update info on submit
+    //update info on submit, grab selected species by ID
     const { error } = await supabase.from("species").update(
       {
         author: userId,
@@ -117,6 +115,7 @@ export default function EditSpeciesDialog(props: editProps) {
       });
     }
 
+    //clean up and reload
     form.reset(defaultValues);
     setOpen(false);
     router.refresh();
@@ -235,6 +234,7 @@ export default function EditSpeciesDialog(props: editProps) {
                        type="checkbox" 
                        onChange={(event) => field.onChange(event.target.checked)} className="w-5 h-5 "
                       />
+                      {/* on change in checkbox, toggle boolean endangered to match the input "checked" property */}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
