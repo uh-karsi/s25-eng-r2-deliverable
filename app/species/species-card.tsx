@@ -140,7 +140,13 @@ export default function SpeciesCard(props: speciesProps) {
         <DialogHeader>
           <DialogTitle>{species.scientific_name}</DialogTitle>
           <DialogDescription className="mt-10 mb-10">
-          <span className="italic">{species.common_name}</span>  |  Kingdom: {species.kingdom}  |  Total Population: {species.total_population}
+          <span className="italic">{species.common_name}</span>  |  Kingdom: {species.kingdom}  |  Total Population: 
+
+            { species.total_population ? 
+              <span> {species.total_population}</span>
+              : <span> Unknown</span>
+            }
+         
           </DialogDescription>
           {species.endangered && (
             <DialogDescription>*Endangered</DialogDescription>
