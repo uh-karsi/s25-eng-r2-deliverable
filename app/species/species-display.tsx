@@ -38,18 +38,26 @@ export default function SpeciesDisplay(props: displayProps) {
         {search && comments  && (
             <div className="flex flex-wrap justify-center">
             {species?.filter(function(i: Species) {
-                if (i.scientific_name.toLowerCase().includes(searchInput.toLowerCase()) || i.common_name?.toLowerCase().includes(searchInput.toLowerCase()) || i.description?.toLowerCase().includes(searchInput.toLowerCase())){
+                if (i.scientific_name.toLowerCase().includes(searchInput.toLowerCase())){
                   return true;
+                } else if (i.common_name?.toLowerCase().includes(searchInput.toLowerCase())){
+                  return true
+                } else if (i.description?.toLowerCase().includes(searchInput.toLowerCase())) {
+                  return true
                 } else {
-                  return false
+                  false
                 }
                 }).map((species: Species) => <SpeciesCard key={species.id} species={species} userId={sessionId} comments={comments}/>)}
 
         {species?.filter(function(i: Species) {
-                if (i.scientific_name.toLowerCase().includes(searchInput.toLowerCase()) || i.common_name?.toLowerCase().includes(searchInput.toLowerCase()) || i.description?.toLowerCase().includes(searchInput.toLowerCase())){
+                if (i.scientific_name.toLowerCase().includes(searchInput.toLowerCase())){
                   return true;
+                } else if (i.common_name?.toLowerCase().includes(searchInput.toLowerCase())){
+                  return true
+                } else if (i.description?.toLowerCase().includes(searchInput.toLowerCase())) {
+                  return true
                 } else {
-                  return false
+                  false
                 }
                 }).length == 0  && (
         <h3 className="mt-10">No species found!</h3>

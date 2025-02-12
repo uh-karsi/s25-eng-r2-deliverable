@@ -132,7 +132,7 @@ export default function SpeciesCard(props: speciesProps) {
       <h4 className="text-lg font-light italic">{species.common_name}</h4>
       <p>{species.description ? species.description.slice(0, 150).trim() + "..." : ""}</p>
       
-      <Button className="mt-3 w-full" onClick={async ()=>await handleOpen(species.author)}>
+      <Button className="mt-3 w-full" onClick={()=>handleOpen(species.author)}>
           Learn More
         </Button>
 
@@ -218,7 +218,7 @@ export default function SpeciesCard(props: speciesProps) {
         </DialogHeader>
          
           <div className="flex">
-          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={async ()=>{await deleteSpecies(species)}} variant="destructive">
+          <Button className="ml-1 mr-1 flex-auto" type="button" onClick={()=>{deleteSpecies(species)}} variant="destructive">
           <Icons.trash className="mr-3 h-5 w-5" />
           Delete
           </Button>
