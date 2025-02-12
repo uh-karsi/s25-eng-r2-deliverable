@@ -167,7 +167,7 @@ export default function SpeciesCard(props: speciesProps) {
       {authorInfo ? (
           <div className="mb-7">
             <div className="flex">
-            <p className="mb-7 ">Created by: {authorInfo[0]?.display_name} / {authorInfo[0]?.email} </p>
+            <p className="mb-4 ">Created by: {authorInfo[0]?.display_name} / {authorInfo[0]?.email} </p>
             {/* toggle author biography */}
             <button onClick={handleBioOpen} className="mr-3 h-5 w-5">
               {bioOpen ? <Icons.chevronDown className="mr-3 ml-3 mt-1 h-5 w-5 rotate-180 transition-all" /> : <Icons.chevronDown className="mr-3 ml-3 mt-1 h-5 w-5 transition-all" />}
@@ -198,7 +198,7 @@ export default function SpeciesCard(props: speciesProps) {
 
       {/* display comments for this specific species ID  */}
         <div>
-          <p className="mb-5">Comments</p>
+          <p className="mb-5 font-bold">Comments</p>
           <div className="flex flex-col justify-center">
             <div className="mb-5">
             {comments?.filter((element)=>element.species_id==species.id).map((comment: Comment) => <Comment key={comment.id} comment={comment} userId={userId} speciesId={species.id}/>)}
