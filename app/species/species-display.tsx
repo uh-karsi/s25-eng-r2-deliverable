@@ -4,7 +4,6 @@
 import SpeciesCard from "./species-card";
 import type { Database } from "@/lib/schema";
 import { useState } from "react";
-import { Icons } from "@/components/icons";
 type Species = Database["public"]["Tables"]["species"]["Row"];
 type Comment = Database["public"]["Tables"]["comments"]["Row"];
 

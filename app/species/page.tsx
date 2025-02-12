@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import AddSpeciesDialog from "./add-species-dialog";
 
 import SpeciesDisplay from "./species-display";
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
+
 
 
 export default async function SpeciesList() {

@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { Database } from "@/lib/schema";
 import { toast } from "@/components/ui/use-toast";
@@ -60,7 +59,7 @@ export default function EditCommentDialog(props:commentProps) {
     });
 
     const onSubmit = async (input: FormData) => {
-        
+
     console.log(input);
     const supabase = createBrowserSupabaseClient();
     //update info on submit
