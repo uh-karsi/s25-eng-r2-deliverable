@@ -82,9 +82,6 @@ export default function SpeciesCard(props: speciesProps) {
     // If no data is found, you can either handle it gracefully or set an empty state
     setAuthorInfo([]);
   }
-
-
-  
   };
   
   //open state of delete prompt
@@ -105,7 +102,7 @@ export default function SpeciesCard(props: speciesProps) {
     }
     //confirm delete
     router.refresh()
-    console.log(joinAuthor(speciesDel.author))
+  
     return toast({
       title: "Deleted!",
       description: "Permanently deleted " + speciesDel.scientific_name + ".",
@@ -162,14 +159,15 @@ export default function SpeciesCard(props: speciesProps) {
             <div className="flex">
             <p className="mb-7 ">Created by: {authorInfo[0]?.display_name} / {authorInfo[0]?.email} </p>
             <button onClick={handleBioOpen} className="mr-3 h-5 w-5">
-            <Icons.chevronDown className="mr-3 ml-3 mt-0.7 h-5 w-5" />
+              {bioOpen ? <Icons.chevronDown className="mr-3 ml-3 mt-1 h-5 w-5 rotate-180 transition-all" /> : <Icons.chevronDown className="mr-3 ml-3 mt-1 h-5 w-5 transition-all" />}
+            
             </button>
             </div>
          
-            {bioOpen && authorInfo[0] && (
+            {bioOpen && authorInfo[0]?.biography && (
               <p className="text-sm">{authorInfo[0]?.biography} </p>
           )}
-          {bioOpen && authorInfo[0] == null &&(
+          {bioOpen && authorInfo[0]?.biography == null &&(
               <p>This user does not have a biography yet! </p>
           )}
             
