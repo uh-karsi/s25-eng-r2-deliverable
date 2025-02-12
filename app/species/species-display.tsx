@@ -31,9 +31,12 @@ export default function SpeciesDisplay(props: displayProps) {
  
   return (
     <div>
-      <Input type="text" name="search" onChange={(event=>{handleSearch(event.target.value, species)})} placeholder="Search species">
+      {species && (
+        <Input type="text" name="search" onChange={(event=>{handleSearch(event.target.value, species)})} placeholder="Search species">
         </Input>
-        {search ? 
+      )}
+      
+        {search && comments  && (
             <div className="flex flex-wrap justify-center">
             {species?.filter((i)=>{return i.scientific_name.toLowerCase().includes(searchInput.toLowerCase()) || i.common_name?.toLowerCase().includes(searchInput.toLowerCase()) || i.description?.toLowerCase().includes(searchInput.toLowerCase())}).map((species: Species) => <SpeciesCard key={species.id} species={species} userId={sessionId} comments={comments}/>)}
 
@@ -42,13 +45,19 @@ export default function SpeciesDisplay(props: displayProps) {
         )}
         </div>
         
-        : 
+       )}
+
+       {search==false && comments && (
           <div className="flex flex-wrap justify-center">
           {species?.map((species: Species) => <SpeciesCard key={species.id} species={species} userId={sessionId} comments={comments}/>)}
+            </div>
+        )}
+
+
       </div>
         
-      }
-    </div>
+      
+  
     
   
   );
